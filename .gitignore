@@ -1,0 +1,29 @@
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Data and model outputs
+*.csv~
+*.log
+*.tmp
+*.pkl
+*.model
+
+# Jupyter and IDE configs
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# OS & build files
+dist/
+build/
