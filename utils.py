@@ -1,71 +1,125 @@
-# utils.py
+import math
 import pandas as pd
-import numpy as np
+
+# ===============================
+# VISUAL CONSTANTS
+# ===============================
+
+HOUSE_COLORS = {
+    'Gryffindor': 'red',
+    'Slytherin': 'green',
+    'Ravenclaw': 'blue',
+    'Hufflepuff': 'gold'
+}
 
 
-def load_dataset(path: str) -> pd.DataFrame:
-    """
-    Load a CSV dataset and return a pandas DataFrame.
-    Automatically strips whitespace from column names.
-    """
-    df = pd.read_csv(path)
-    df.columns = df.columns.str.strip()
-    return df
+# ===============================
+# BASIC STATS FUNCTIONS
+# ===============================
 
+import math
+import pandas as pd
 
-def clean_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clean the dataset by handling missing values or inconsistent data.
-    - Converts numeric columns where possible.
-    - Keeps NaN for missing numeric data (handled later in model/training).
-    """
-    for col in df.columns:
+# ===============================
+# BASIC STATS IMPLEMENTATION
+# ===============================
+
+def _to_floats(values):
+    """Convert values to float when possible, skip non-numeric or NaN."""
+    clean = []
+    for v in values:
+        if pd.isna(v):
+            continue
         try:
-            df[col] = pd.to_numeric(df[col])
+            clean.append(float(v))
         except (ValueError, TypeError):
-            # If conversion fails, we leave the column as-is
-            pass
-    return df
+            continue
+    return clean
+
+def count(values):
+    clean = _to_floats(values)
+    return len(clean)
+
+def mean(values):
+    clean = _to_floats(values)
+    n = len(clean)
+    if n == 0:
+        return float('nan')
+    total = sum(clean)
+    return total / n
+
+def variance(values):
+    clean = _to_floats(values)
+    n = len(clean)
+    if n <= 1:
+        return float('nan')
+    m = mean(clean)
+    return sum((v - m) ** 2 for v in clean) / (n - 1)
+
+def std(values):
+    var = variance(values)
+    return math.sqrt(var) if not math.isnan(var) else float('nan')
+
+def minimum(values):
+    clean = _to_floats(values)
+    return min(clean) if clean else float('nan')
+
+def maximum(values):
+    clean = _to_floats(values)
+    return max(clean) if clean else float('nan')
+
+def percentile(values, p):
+    clean = sorted(_to_floats(values))
+    n = len(clean)
+    if n == 0:
+        return float('nan')
+    k = (n - 1) * (p / 100)
+    f = math.floor(k)
+    c = math.ceil(k)
+    if f == c:
+        return clean[int(k)]
+    d0 = clean[int(f)] * (c - k)
+    d1 = clean[int(c)] * (k - f)
+    return d0 + d1
 
 
-def get_numeric_columns(df: pd.DataFrame) -> list:
-    """
-    Return list of columns with numeric data types.
-    """
-    return df.select_dtypes(include=[np.number]).columns.tolist()
+# ===============================
+# DATA HELPERS
+# ===============================
+
+def read_dataset(path):
+    """Load dataset and return only numeric columns."""
+    print(f"📘 Loading dataset: {path}")
+    df = pd.read_csv(path)
+    numeric_cols = [col for col in df.columns if is_numeric_series(df[col])]
+    return df, numeric_cols
 
 
-def describe_numeric(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Compute summary statistics for numeric columns (like pandas describe()).
-    """
-    numeric_df = df.select_dtypes(include=[np.number])
-    desc = numeric_df.describe().T  # transpose for readability
-    return desc
+def is_numeric_series(series):
+    """Detect if a pandas series is numeric (even if stored as string)."""
+    try:
+        pd.to_numeric(series.dropna().iloc[:10])
+        return True
+    except Exception:
+        return False
 
 
-def safe_mean(series: pd.Series) -> float:
-    """
-    Compute mean safely (ignoring NaNs).
-    """
-    return series.dropna().mean()
+# ===============================
+# HOGWARTS STATS
+# ===============================
+
+def compute_house_stats(df, courses):
+    """Compute mean score per house per course."""
+    houses = df['Hogwarts House'].unique()
+    stats = {}
+    for course in courses:
+        stats[course] = {
+            house: mean(df.loc[df['Hogwarts House'] == house, course])
+            for house in houses
+        }
+    return stats
 
 
-def safe_std(series: pd.Series) -> float:
-    """
-    Compute standard deviation safely (ignoring NaNs).
-    """
-    return series.dropna().std()
-
-
-def check_missing_values(df: pd.DataFrame):
-    """
-    Print the number of missing values per column.
-    """
-    missing = df.isnull().sum()
-    missing = missing[missing > 0]
-    if len(missing) > 0:
-        print("\n⚠️ Missing values detected:\n")
-        print(missing)
-    else:
-        print("\n✅ No missing values found.\n")
+def homogeneity_score(house_means):
+    """Return the variance of house means (lower = more homogeneous)."""
+    return variance(list(house_means.values()))
