@@ -12,14 +12,6 @@ HOUSE_COLORS = {
     'Hufflepuff': 'gold'
 }
 
-
-# ===============================
-# BASIC STATS FUNCTIONS
-# ===============================
-
-import math
-import pandas as pd
-
 # ===============================
 # BASIC STATS IMPLEMENTATION
 # ===============================
