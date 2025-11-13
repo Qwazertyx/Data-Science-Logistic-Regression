@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
-from utils import read_dataset, HOUSE_COLORS
+from utils import read_dataset, HOUSE_COLORS, correlation_matrix
 
 
 def main():
@@ -37,11 +37,35 @@ def main():
             return
         print(f"📊 Comparing user-selected features: {feature_x} vs {feature_y}")
     else:
-        # Auto-detect most correlated pair
-        corr_matrix = df[numeric_cols].corr().abs()
-        np.fill_diagonal(corr_matrix.values, 0)
-        max_corr = corr_matrix.max().max()
-        feature_x, feature_y = corr_matrix.stack().idxmax()
+        # Auto-detect most correlated pair using custom correlation function
+        corr_matrix = correlation_matrix(df, numeric_cols)
+        
+        # Find the maximum absolute correlation value and its position
+        # (excluding diagonal self-correlations)
+        max_corr = 0
+        feature_x = None
+        feature_y = None
+        
+        for col_x in numeric_cols:
+            for col_y in numeric_cols:
+                if col_x == col_y:
+                    continue  # Skip diagonal (self-correlation)
+                
+                corr_val = corr_matrix.loc[col_x, col_y]
+                if pd.isna(corr_val):
+                    continue
+                
+                # Take absolute value manually
+                abs_corr = abs(corr_val)
+                if abs_corr > max_corr:
+                    max_corr = abs_corr
+                    feature_x = col_x
+                    feature_y = col_y
+        
+        if feature_x is None or feature_y is None:
+            print("❌ Error: Could not find correlated features.")
+            return
+        
         print(f"🔍 Most similar features: {feature_x} and {feature_y} (corr={max_corr:.2f})")
 
     # 4️⃣ Drop NaN values in the selected features

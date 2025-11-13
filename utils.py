@@ -115,3 +115,87 @@ def compute_house_stats(df, courses):
 def homogeneity_score(house_means):
     """Return the variance of house means (lower = more homogeneous)."""
     return variance(list(house_means.values()))
+
+
+# ===============================
+# CORRELATION IMPLEMENTATION
+# ===============================
+
+def correlation(x_values, y_values):
+    """
+    Compute Pearson correlation coefficient between two series.
+    
+    Formula: r = Σ((x - x̄)(y - ȳ)) / sqrt(Σ(x - x̄)² * Σ(y - ȳ)²)
+    
+    Args:
+        x_values: First series of values
+        y_values: Second series of values (must be same length as x_values)
+    
+    Returns:
+        Correlation coefficient (float) or NaN if insufficient data
+    """
+    # Pair values together and remove any NaN pairs
+    pairs = []
+    for i in range(len(x_values)):
+        x_val = x_values.iloc[i] if hasattr(x_values, 'iloc') else x_values[i]
+        y_val = y_values.iloc[i] if hasattr(y_values, 'iloc') else y_values[i]
+        
+        if pd.isna(x_val) or pd.isna(y_val):
+            continue
+        try:
+            pairs.append((float(x_val), float(y_val)))
+        except (ValueError, TypeError):
+            continue
+    
+    if len(pairs) < 2:
+        return float('nan')
+    
+    x_vals = [p[0] for p in pairs]
+    y_vals = [p[1] for p in pairs]
+    
+    # Calculate means
+    x_mean = mean(x_vals)
+    y_mean = mean(y_vals)
+    
+    if math.isnan(x_mean) or math.isnan(y_mean):
+        return float('nan')
+    
+    # Calculate numerator: Σ((x - x̄)(y - ȳ))
+    numerator = sum((x_vals[i] - x_mean) * (y_vals[i] - y_mean) for i in range(len(pairs)))
+    
+    # Calculate denominators: sqrt(Σ(x - x̄)² * Σ(y - ȳ)²)
+    x_variance_sum = sum((x_vals[i] - x_mean) ** 2 for i in range(len(pairs)))
+    y_variance_sum = sum((y_vals[i] - y_mean) ** 2 for i in range(len(pairs)))
+    
+    denominator = math.sqrt(x_variance_sum * y_variance_sum)
+    
+    if denominator == 0:
+        return float('nan')
+    
+    return numerator / denominator
+
+
+def correlation_matrix(df, columns):
+    """
+    Compute correlation matrix for given columns.
+    
+    Args:
+        df: DataFrame containing the data
+        columns: List of column names to compute correlations for
+    
+    Returns:
+        DataFrame with correlation matrix (same structure as pandas corr())
+    """
+    n = len(columns)
+    corr_data = {}
+    
+    for col_x in columns:
+        corr_data[col_x] = {}
+        for col_y in columns:
+            if col_x == col_y:
+                corr_data[col_x][col_y] = 1.0
+            else:
+                corr = correlation(df[col_x], df[col_y])
+                corr_data[col_x][col_y] = corr
+    
+    return pd.DataFrame(corr_data, index=columns, columns=columns)
