@@ -18,17 +18,36 @@ All computations implemented manually:
 
 ### Data Visualization
 
-**Pair Plot Matrix** - Feature relationships across 14 dimensions
-<img src="images/pair_plot.png" width="300" alt="Pair Plot">
-
-**Score Distribution** - Histograms by house for each course
-<img src="images/score_distribution.png" width="300" alt="Score Distribution">
-
-**Most Homogeneous Course** - Course with smallest variance between houses
-<img src="images/most_homogeneous_course.png" width="300" alt="Most Homogeneous Course">
-
-**Most Similar Features** - Auto-detected highest correlation pair
-<img src="images/most_similar_features.png" width="300" alt="Most Similar Features">
+<table>
+<tr>
+<td width="50%">
+<strong>Pair Plot Matrix</strong><br>
+Feature relationships across 14 dimensions
+<br><br>
+<img src="images/pair_plot.png" width="100%" alt="Pair Plot">
+</td>
+<td width="50%">
+<strong>Score Distribution</strong><br>
+Histograms by house for each course
+<br><br>
+<img src="images/score_distribution.png" width="100%" alt="Score Distribution">
+</td>
+</tr>
+<tr>
+<td width="50%">
+<strong>Most Homogeneous Course</strong><br>
+Course with smallest variance between houses
+<br><br>
+<img src="images/most_homogeneous_course.png" width="100%" alt="Most Homogeneous Course">
+</td>
+<td width="50%">
+<strong>Most Similar Features</strong><br>
+Auto-detected highest correlation pair
+<br><br>
+<img src="images/most_similar_features.png" width="100%" alt="Most Similar Features">
+</td>
+</tr>
+</table>
 
 ## 🤖 Machine Learning
 
