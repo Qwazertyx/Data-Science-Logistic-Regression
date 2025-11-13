@@ -54,6 +54,47 @@ This project showcases hands-on experience in:
 - Generates predictions for test set
 - Outputs results to `houses.csv`
 
+## 📈 Results
+
+The logistic regression model successfully:
+- Trains on 14 numeric features
+- Classifies students into 4 Hogwarts houses (Gryffindor, Slytherin, Ravenclaw, Hufflepuff)
+- Uses one-vs-rest strategy for multi-class classification
+- Generates predictions with proper preprocessing pipeline
+
+### Model Performance
+
+The trained model achieves excellent performance on the test set:
+
+**🎯 Overall Accuracy: 98.19%**
+
+**🏠 Accuracy per Class:**
+- **Gryffindor**: 97.25%
+- **Hufflepuff**: 99.24%
+- **Ravenclaw**: 98.19%
+- **Slytherin**: 97.34%
+
+**📊 Confusion Matrix:**
+
+| Actual \ Predicted | Gryffindor | Hufflepuff | Ravenclaw | Slytherin |
+|-------------------|------------|------------|-----------|-----------|
+| **Gryffindor**    | 318        | 4          | 5         | 0         |
+| **Hufflepuff**    | 2          | 525        | 1         | 1         |
+| **Ravenclaw**     | 2          | 4          | 435       | 2         |
+| **Slytherin**     | 0          | 3          | 5         | 293       |
+
+**📈 Classification Report:**
+
+| Class       | Precision | Recall | F1-Score |
+|-------------|-----------|--------|----------|
+| Gryffindor  | 0.988     | 0.972  | 0.980    |
+| Hufflepuff | 0.979     | 0.992  | 0.986    |
+| Ravenclaw   | 0.975     | 0.982  | 0.979    |
+| Slytherin  | 0.990     | 0.973  | 0.982    |
+
+The model demonstrates strong performance across all classes with balanced precision and recall, indicating effective classification without significant bias toward any particular house.
+
+
 ## 🛠️ Technical Implementation
 
 ### Custom Statistical Functions
@@ -123,63 +164,6 @@ python logreg_train.py datasets/dataset_train.csv weights.json
 python logreg_predict.py datasets/dataset_test.csv weights.json
 ```
 
-## 📁 Project Structure
-
-```
-Data-Science-Logistic-Regression/
-├── datasets/
-│   ├── dataset_train.csv    # Training data
-│   └── dataset_test.csv     # Test data
-├── images/                  # Generated visualizations
-│   ├── pair_plot.png
-│   ├── score_distribution.png
-│   ├── most_homogeneous_course.png
-│   └── most_similar_features.png
-├── describe.py              # Statistical analysis
-├── histogram.py             # Histogram visualizations
-├── pair_plot.py             # Pair plot matrix
-├── scatter_plot.py          # Scatter plot with correlation
-├── logreg_train.py          # Model training
-├── logreg_predict.py        # Model prediction
-├── utils.py                 # Shared utilities & custom functions
-├── weights.json             # Trained model weights
-├── houses.csv               # Predictions output
-├── requirements.txt         # Python dependencies
-├── Makefile                 # Build automation
-└── README.md                # This file
-```
-
-## 🎓 Skills Demonstrated
-
-### Data Science
-- ✅ Exploratory Data Analysis (EDA)
-- ✅ Statistical computing from scratch
-- ✅ Data visualization (matplotlib)
-- ✅ Feature correlation analysis
-- ✅ Data preprocessing and cleaning
-
-### Machine Learning
-- ✅ Logistic regression implementation
-- ✅ Gradient descent optimization
-- ✅ Multi-class classification
-- ✅ Model training and evaluation
-- ✅ Feature standardization
-
-### Software Engineering
-- ✅ Clean, modular code structure
-- ✅ Custom utility functions
-- ✅ Command-line interfaces
-- ✅ Makefile automation
-- ✅ Documentation
-
-## 📈 Results
-
-The logistic regression model successfully:
-- Trains on 14 numeric features
-- Classifies students into 4 Hogwarts houses (Gryffindor, Slytherin, Ravenclaw, Hufflepuff)
-- Uses one-vs-rest strategy for multi-class classification
-- Generates predictions with proper preprocessing pipeline
-
 ## 🔧 Dependencies
 
 - `pandas` - Data manipulation
@@ -193,10 +177,5 @@ The logistic regression model successfully:
 - The project follows educational best practices by implementing core algorithms manually
 - Visualizations are optimized for readability with proper label formatting and spacing
 
-## 👤 Author
-
-Demonstrating proficiency in data science, statistical analysis, and machine learning implementation.
-
 ---
 
-**Built with ❤️ for data science and machine learning**
