@@ -62,6 +62,33 @@ The logistic regression model successfully:
 - Uses one-vs-rest strategy for multi-class classification
 - Generates predictions with proper preprocessing pipeline
 
+### Data Analysis Results
+
+Descriptive statistics computed using custom implementations (no pandas statistical functions):
+
+| Feature | Count | Mean | Std | Min | 25% | 50% | 75% | Max |
+|---------|-------|------|-----|-----|-----|-----|-----|-----|
+| **Index** | 1600 | 799.5 | 462.025 | 0 | 399.75 | 799.5 | 1199.25 | 1599 |
+| **Arithmancy** | 1566 | 49634.6 | 16679.8 | -24370 | 38511.5 | 49013.5 | 60811.2 | 104956 |
+| **Astronomy** | 1568 | 39.80 | 520.30 | -966.74 | -489.55 | 260.29 | 524.77 | 1016.21 |
+| **Herbology** | 1567 | 1.14 | 5.22 | -10.30 | -4.31 | 3.47 | 5.42 | 11.61 |
+| **Defense Against the Dark Arts** | 1569 | -0.39 | 5.21 | -10.16 | -5.26 | -2.59 | 4.90 | 9.67 |
+| **Divination** | 1561 | 3.15 | 4.16 | -8.73 | 3.10 | 4.62 | 5.67 | 10.03 |
+| **Muggle Studies** | 1565 | -224.59 | 486.35 | -1086.5 | -577.58 | -419.16 | 254.99 | 1092.39 |
+| **Ancient Runes** | 1565 | 495.75 | 106.29 | 283.87 | 397.51 | 463.92 | 597.49 | 745.40 |
+| **History of Magic** | 1557 | 2.96 | 4.43 | -8.86 | 2.22 | 4.38 | 5.83 | 11.89 |
+| **Transfiguration** | 1566 | 1030.10 | 44.13 | 906.63 | 1026.21 | 1045.51 | 1058.44 | 1098.96 |
+| **Potions** | 1570 | 5.95 | 3.15 | -4.70 | 3.65 | 5.87 | 8.25 | 13.54 |
+| **Care of Magical Creatures** | 1560 | -0.05 | 0.97 | -3.31 | -0.67 | -0.04 | 0.59 | 3.06 |
+| **Charms** | 1600 | -243.37 | 8.78 | -261.05 | -250.65 | -244.87 | -232.55 | -225.43 |
+| **Flying** | 1600 | 21.96 | 97.63 | -181.47 | -41.87 | -2.52 | 50.56 | 279.07 |
+
+**Key Observations:**
+- Dataset contains 1,600 students with 14 numeric features
+- Some features have missing values (counts range from 1557 to 1600)
+- Wide range of scales across features (e.g., Arithmancy: ~50K, Charms: ~-243)
+- Feature standardization is crucial for model performance
+
 ### Model Performance
 
 The trained model achieves excellent performance on the test set:
