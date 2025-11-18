@@ -22,7 +22,7 @@ Feature relationships across 14 dimensions
 <strong>Score Distribution</strong><br>
 Histograms by house for each course
 <br><br>
-<img src="images/score_distribution.png" width="100%" alt="Score Distribution">
+<img src="images/score_distributions.png" width="100%" alt="Score Distribution">
 </td>
 </tr>
 <tr>
