@@ -1,57 +1,58 @@
 # pair_plot.py
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
-import textwrap
 from utils import read_dataset, HOUSE_COLORS
 
 
-def abbreviate_label(label, max_length=15):
-    """Abbreviate long labels to prevent overlapping."""
-    # Common abbreviations for Hogwarts subjects
-    abbreviations = {
-        'Defense Against the Dark Arts': 'Defense DADA',
-        'Care of Magical Creatures': 'Magical Creatures',
-        'History of Magic': 'History Magic',
-        'Muggle Studies': 'Muggle Studies',
-        'Ancient Runes': 'Ancient Runes',
-        'Transfiguration': 'Transfiguration',
-        'Divination': 'Divination',
-        'Herbology': 'Herbology',
-        'Astronomy': 'Astronomy',
-        'Arithmancy': 'Arithmancy',
-        'Potions': 'Potions',
-        'Charms': 'Charms',
-        'Flying': 'Flying',
-        'Score': 'Score'
-    }
-    
-    if label in abbreviations:
-        return abbreviations[label]
-    
-    # If label is still too long, wrap it
+def abbreviate_label(label, max_length=9):
+    """Abbreviate labels to first 9 letters, add '.' if truncated."""
     if len(label) > max_length:
-        return '\n'.join(textwrap.wrap(label, max_length))
+        return label[:max_length] + "."
     return label
 
 
 def main():
-    # 1️⃣ Load dataset
-    df, numeric_cols = read_dataset("datasets/dataset_train.csv")
+    # Load dataset
+    try:
+        df, numeric_cols = read_dataset("datasets/dataset_train.csv")
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)
+    
+    if 'Hogwarts House' not in df.columns:
+        print("Error: 'Hogwarts House' column not found in dataset")
+        sys.exit(1)
 
-    # 2️⃣ Remove non-feature columns
+    # Remove non-feature columns
     numeric_cols = [
         col for col in numeric_cols
         if not any(keyword in col.lower() for keyword in ['index', 'id'])
     ]
+    
+    if len(numeric_cols) == 0:
+        print("Error: No numeric feature columns found after filtering")
+        sys.exit(1)
 
-    # 3️⃣ Keep relevant columns
-    df_plot = df[["Hogwarts House"] + numeric_cols].dropna()
+    # Keep relevant columns
+    try:
+        df_plot = df[["Hogwarts House"] + numeric_cols].dropna()
+    except KeyError as e:
+        print(f"Error: Missing required column: {str(e)}")
+        sys.exit(1)
+    
+    if len(df_plot) == 0:
+        print("Error: No data remaining after dropping NaN values")
+        sys.exit(1)
 
     n = len(numeric_cols)
-    # Increase figure size for better readability
-    fig, axes = plt.subplots(n, n, figsize=(3.5 * n, 3.5 * n))
+    try:
+        fig, axes = plt.subplots(n, n, figsize=(3.5 * n, 3.5 * n))
+    except Exception as e:
+        print(f"Error: Failed to create plot figure: {str(e)}")
+        sys.exit(1)
 
-    # 4️⃣ Create the matrix of plots
+    # Create the matrix of plots
     for i in range(n):
         for j in range(n):
             ax = axes[i, j]
@@ -79,35 +80,46 @@ def main():
             ax.set_xticks([])
             ax.set_yticks([])
 
-            # Show only feature names on outer labels with better formatting
+            # Show feature names on outer labels
             if j == 0:
                 label = abbreviate_label(numeric_cols[i])
-                ax.set_ylabel(label, fontsize=10, labelpad=12, rotation=0, ha='right', va='center')
+                ax.set_ylabel(label, fontsize=10, labelpad=6, rotation=0, ha='right', va='center')
             else:
                 ax.set_ylabel("")
             
             if i == n - 1:
                 label = abbreviate_label(numeric_cols[j])
-                ax.set_xlabel(label, fontsize=10, rotation=90, labelpad=12, ha='center', va='top')
+                ax.set_xlabel(label, fontsize=10, rotation=90, labelpad=15, ha='center', va='top')
             else:
                 ax.set_xlabel("")
 
-    # 5️⃣ Add title and layout adjustments
+    # Add title and layout adjustments
     fig.suptitle("Pair Plot of Hogwarts Features", y=0.995, fontsize=16, fontweight='bold')
     handles = [
-        plt.Line2D([], [], marker="o", color=color, linestyle="", label=house, markersize=8)
+        plt.Line2D([], [], marker="o", color=color, linestyle="", label=house, markersize=6)
         for house, color in HOUSE_COLORS.items()
     ]
-    fig.legend(handles=handles, loc="upper right", title="Hogwarts House", 
-               fontsize=11, title_fontsize=12, framealpha=0.9)
+    fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(0.02, 0.02), 
+               title="Hogwarts House", fontsize=8, title_fontsize=9, framealpha=0.9)
 
-    # Adjust layout for spacing - more space for labels
+    # Adjust layout for spacing
     plt.subplots_adjust(
-        left=0.08, right=0.96, top=0.96, bottom=0.08, wspace=0.35, hspace=0.35
+        left=0.10, right=0.98, top=0.96, bottom=0.15, wspace=0.35, hspace=0.35
     )
 
-    plt.show()
+    try:
+        plt.show()
+    except Exception as e:
+        print(f"Error: Failed to display plot: {str(e)}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted by user")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        sys.exit(1)

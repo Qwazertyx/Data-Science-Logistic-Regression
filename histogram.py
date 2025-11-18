@@ -1,3 +1,4 @@
+import sys
 import matplotlib.pyplot as plt
 from utils import (
     read_dataset, compute_house_stats, homogeneity_score, _to_floats,
@@ -65,7 +66,7 @@ def plot_most_homogeneous(df, stats):
     homogeneity = {c: homogeneity_score(hm) for c, hm in stats.items()}
     best_course = min(homogeneity, key=homogeneity.get)
 
-    print(f"📊 Most homogeneous course: {best_course}")
+    print(f"Most homogeneous course: {best_course}")
 
     houses = df['Hogwarts House'].unique()
     plt.figure(figsize=(7, 5))
@@ -92,13 +93,33 @@ def plot_most_homogeneous(df, stats):
 
 def main():
     """Entry point of the analysis."""
-    df, numeric_cols = read_dataset("datasets/dataset_train.csv")
+    try:
+        df, numeric_cols = read_dataset("datasets/dataset_train.csv")
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)
+    
+    if 'Hogwarts House' not in df.columns:
+        print("Error: 'Hogwarts House' column not found in dataset")
+        sys.exit(1)
 
     # Select relevant courses only
     ignore = ['Index', 'Arithmancy']
     courses = [c for c in numeric_cols if c not in ignore]
+    
+    if len(courses) == 0:
+        print("Error: No valid courses found after filtering")
+        sys.exit(1)
 
-    stats = compute_house_stats(df, courses)
+    try:
+        stats = compute_house_stats(df, courses)
+    except ValueError as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)
+    
+    if len(stats) == 0:
+        print("Error: No statistics computed")
+        sys.exit(1)
 
     # Print summary data to console
     print("\n========== HOUSE MEAN SCORES BY COURSE ==========")
@@ -113,12 +134,23 @@ def main():
         print(f"{course:<30} -> variance = {h:.3f}")
 
     best_course = min(homogeneity, key=homogeneity.get)
-    print(f"\n🏆 Most homogeneous course: {best_course} (variance = {homogeneity[best_course]:.3f})\n")
+    print(f"\nMost homogeneous course: {best_course} (variance = {homogeneity[best_course]:.3f})\n")
 
     # Plot all histograms
-    plot_histograms(df, stats, courses)
-    plot_most_homogeneous(df, stats)
+    try:
+        plot_histograms(df, stats, courses)
+        plot_most_homogeneous(df, stats)
+    except Exception as e:
+        print(f"Error: Failed to create plots: {str(e)}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted by user")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        sys.exit(1)

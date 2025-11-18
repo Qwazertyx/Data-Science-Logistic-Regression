@@ -1,20 +1,12 @@
-# 🧙‍♂️ Data Science & Logistic Regression
+# Data Science & Logistic Regression
 
 **End-to-end data science project**: Custom statistical implementations, EDA, and logistic regression from scratch. Multi-class classification of Hogwarts students into 4 houses.
 
-## 🎯 Key Achievements
+## Key Achievements
 
 - **Custom Statistics**: Mean, variance, std, percentiles, correlation — all implemented from scratch (no pandas shortcuts)
 - **Machine Learning**: Logistic regression with gradient descent, one-vs-rest classification
 - **Model Performance**: **98.19% accuracy** on test set
-
-## 📊 Data Science Implementation
-
-### Custom Statistical Functions
-All computations implemented manually:
-- `mean()`, `variance()`, `std()`, `percentile()`
-- `correlation()` - Pearson correlation coefficient
-- `correlation_matrix()` - Full correlation analysis
 
 ### Data Visualization
 
@@ -49,7 +41,7 @@ Auto-detected highest correlation pair
 </tr>
 </table>
 
-## 🤖 Machine Learning
+## Machine Learning
 
 ### Training (`logreg_train.py`)
 - **Gradient descent** from scratch
@@ -60,7 +52,7 @@ Auto-detected highest correlation pair
 
 ### Results
 
-**🎯 Overall Accuracy: 98.19%**
+**Overall Accuracy: 98.19%**
 
 | Class       | Precision | Recall | F1-Score |
 |-------------|-----------|--------|----------|
@@ -77,7 +69,7 @@ Auto-detected highest correlation pair
 | **Ravenclaw**     | 2          | 4          | 435       | 2         |
 | **Slytherin**     | 0          | 3          | 5         | 293       |
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install dependencies

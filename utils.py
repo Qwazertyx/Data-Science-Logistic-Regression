@@ -1,4 +1,5 @@
 import math
+import os
 import pandas as pd
 
 # ===============================
@@ -81,16 +82,47 @@ def percentile(values, p):
 
 def read_dataset(path):
     """Load dataset and return only numeric columns."""
-    print(f"📘 Loading dataset: {path}")
-    df = pd.read_csv(path)
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Error: Dataset file not found: {path}")
+    
+    if os.path.getsize(path) == 0:
+        raise ValueError(f"Error: Dataset file is empty: {path}")
+    
+    try:
+        print(f"Loading dataset: {path}")
+        df = pd.read_csv(path)
+    except pd.errors.EmptyDataError:
+        raise ValueError(f"Error: Dataset file is empty or has no valid data: {path}")
+    except pd.errors.ParserError as e:
+        raise ValueError(f"Error: Failed to parse CSV file {path}: {str(e)}")
+    except Exception as e:
+        raise ValueError(f"Error: Failed to read dataset {path}: {str(e)}")
+    
+    if df.empty:
+        raise ValueError(f"Error: Dataset is empty after loading: {path}")
+    
+    if len(df.columns) == 0:
+        raise ValueError(f"Error: Dataset has no columns: {path}")
+    
     numeric_cols = [col for col in df.columns if is_numeric_series(df[col])]
+    
+    if len(numeric_cols) == 0:
+        raise ValueError(f"Error: No numeric columns found in dataset: {path}")
+    
     return df, numeric_cols
 
 
 def is_numeric_series(series):
     """Detect if a pandas series is numeric (even if stored as string)."""
     try:
-        pd.to_numeric(series.dropna().iloc[:10])
+        if series.empty:
+            return False
+        non_null = series.dropna()
+        if len(non_null) == 0:
+            return False
+        # Check first 10 non-null values
+        sample_size = min(10, len(non_null))
+        pd.to_numeric(non_null.iloc[:sample_size])
         return True
     except Exception:
         return False
@@ -102,9 +134,20 @@ def is_numeric_series(series):
 
 def compute_house_stats(df, courses):
     """Compute mean score per house per course."""
-    houses = df['Hogwarts House'].unique()
+    if 'Hogwarts House' not in df.columns:
+        raise ValueError("Error: 'Hogwarts House' column not found in dataset")
+    
+    if len(courses) == 0:
+        raise ValueError("Error: No courses provided for house stats computation")
+    
+    houses = df['Hogwarts House'].dropna().unique()
+    if len(houses) == 0:
+        raise ValueError("Error: No houses found in dataset")
+    
     stats = {}
     for course in courses:
+        if course not in df.columns:
+            continue
         stats[course] = {
             house: mean(df.loc[df['Hogwarts House'] == house, course])
             for house in houses

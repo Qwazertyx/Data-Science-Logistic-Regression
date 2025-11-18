@@ -66,13 +66,33 @@ def main():
         sys.exit(1)
 
     dataset_path = sys.argv[1]
-    df, numeric_cols = read_dataset(dataset_path)
+    
+    try:
+        df, numeric_cols = read_dataset(dataset_path)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)
+    
+    if len(numeric_cols) == 0:
+        print("Error: No numeric columns found in dataset")
+        sys.exit(1)
 
-    print("\n📊 Computing summary statistics...\n")
+    print("\nComputing summary statistics...\n")
 
-    stats = compute_summary(df, numeric_cols)
-    print_summary_table(numeric_cols, stats)
+    try:
+        stats = compute_summary(df, numeric_cols)
+        print_summary_table(numeric_cols, stats)
+    except Exception as e:
+        print(f"Error: Failed to compute statistics: {str(e)}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInterrupted by user")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        sys.exit(1)
