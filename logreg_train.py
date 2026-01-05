@@ -78,7 +78,7 @@ def main():
         print("Error: Dataset has no rows")
         sys.exit(1)
 
-    # Impute missing values with column mean (train mean)
+    # Input missing values with column mean (train mean)
     means = {}
     for col in numeric_cols:
         col_values = df_num[col].tolist()
@@ -128,7 +128,6 @@ def main():
         sys.exit(1)
 
     print(f"Found classes: {classes}")
-    thetas = []
     training_info = {
         "classes": classes,
         "feature_names": numeric_cols,

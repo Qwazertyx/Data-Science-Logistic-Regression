@@ -1,6 +1,5 @@
 # pair_plot.py
 import sys
-import pandas as pd
 import matplotlib.pyplot as plt
 from utils import read_dataset, HOUSE_COLORS
 

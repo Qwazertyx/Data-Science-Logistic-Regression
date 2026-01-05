@@ -1,7 +1,6 @@
 # scatter_plot.py
 import sys
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 from utils import read_dataset, HOUSE_COLORS, correlation_matrix
