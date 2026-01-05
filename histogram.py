@@ -104,7 +104,7 @@ def main():
         sys.exit(1)
 
     # Select relevant courses only
-    ignore = ['Index', 'Arithmancy']
+    ignore = ['Index']
     courses = [c for c in numeric_cols if c not in ignore]
     
     if len(courses) == 0:
